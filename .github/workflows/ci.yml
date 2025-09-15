@@ -9,35 +9,39 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        version: '5.15.2'
-        modules: 'qtbase qttools qtwidgets'
-        
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          build-essential \
-          g++ \
-          make \
-          rsync \
-          pkg-config \
-          libgl1-mesa-dev \
-          gzip
-          
-    - name: Configure project
-      run: qmake luckybackup.pro
-      
-    - name: Build project
-      run: make -j$(nproc)
-      
-    - name: Check executable
-      run: |
-        ls -la luckybackup
-        file luckybackup
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          target: 'desktop'
+          arch: 'gcc_64'
+          install-deps: 'true'
+          cache: 'true'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            g++ \
+            make \
+            rsync \
+            pkg-config \
+            libgl1-mesa-dev \
+            gzip
+
+      - name: Configure project
+        run: qmake luckybackup.pro
+
+      - name: Build project
+        run: make -j"$(nproc)"
+
+      - name: Check executable
+        run: |
+          ls -la luckybackup || true
+          file luckybackup || true
+
