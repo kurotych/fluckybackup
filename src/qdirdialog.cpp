@@ -6,8 +6,8 @@
 **
 ** This file is part of the luckybackup project
 **
-** This file may be distributed and/or modified under the terms of the 
-** license defined by the Stanford Center for Reservoir Forecasting and 
+** This file may be distributed and/or modified under the terms of the
+** license defined by the Stanford Center for Reservoir Forecasting and
 ** appearing in the file LICENSE.XFREE included in the packaging of this file.
 **
 ** This file may be distributed and/or modified under the terms of the
@@ -27,59 +27,48 @@
 
 #include "qdirdialog.h"
 
+QDirDialog::QDirDialog(const QString &extension, const QString &dirName,
+                       QWidget *parent, const char *name,
+                       QFileDialog::FileMode mode, bool modal)
+    : QFileDialog(parent, QString::null, dirName), extension_(extension) {
 
-QDirDialog::QDirDialog( const QString& extension, 
-                        const QString& dirName, QWidget* parent,
-                        const char* name, 
-                        QFileDialog::FileMode mode,
-                        bool modal )
-  : QFileDialog( parent, QString::null, dirName),
-    extension_( extension ) {
-
-  if(name)
+  if (name)
     setObjectName(name);
 
   setModal(modal);
-  init_dialog( mode );
+  init_dialog(mode);
 }
 
-QDirDialog::QDirDialog( const QString& extension, 
-                        QWidget* parent,
-                        const char* name, 
-                        QFileDialog::FileMode mode,
-                        bool modal )
-  : QFileDialog( parent, Qt::Dialog),
-    extension_( extension ) {
+QDirDialog::QDirDialog(const QString &extension, QWidget *parent,
+                       const char *name, QFileDialog::FileMode mode, bool modal)
+    : QFileDialog(parent, Qt::Dialog), extension_(extension) {
 
   setModal(modal);
-  if(name)
+  if (name)
     setObjectName(name);
-  
-  init_dialog( mode );
+
+  init_dialog(mode);
 }
 
-
-void QDirDialog::check_selected_directory( const QString& dirName ) {
-  if( !dirName.endsWith( extension_, Qt::CaseInsensitive) ) return;
+void QDirDialog::check_selected_directory(const QString &dirName) {
+  if (!dirName.endsWith(extension_, Qt::CaseInsensitive))
+    return;
 
   selected_directory_ = dirName;
   this->accept();
 }
 
+void QDirDialog::init_dialog(QFileDialog::FileMode mode) {
+  setFileMode(mode);
 
-void QDirDialog::init_dialog( QFileDialog::FileMode mode ) {
-  setFileMode( mode );
-
-  QObject::connect( this, SIGNAL( directoryEntered( const QString& ) ),
-                    this, SLOT( check_selected_directory( const QString& ) ) );
-
+  QObject::connect(this, SIGNAL(directoryEntered(const QString &)), this,
+                   SLOT(check_selected_directory(const QString &)));
 }
-
 
 void QDirDialog::accept() {
   QDialog::accept();
   QStringList sl = selectedFiles();
-  if( selected_directory_.isEmpty() ) {
+  if (selected_directory_.isEmpty()) {
     selected_directory_ = sl[0];
   }
 }

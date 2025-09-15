@@ -6,8 +6,8 @@
 **
 ** This file is part of the luckybackup project
 **
-** This file may be distributed and/or modified under the terms of the 
-** license defined by the Stanford Center for Reservoir Forecasting and 
+** This file may be distributed and/or modified under the terms of the
+** license defined by the Stanford Center for Reservoir Forecasting and
 ** appearing in the file LICENSE.XFREE included in the packaging of this file.
 **
 ** This file may be distributed and/or modified under the terms of the
@@ -44,7 +44,7 @@
 
 project version    : Please see "main.cpp" for project version
 
-developer          : luckyb 
+developer          : luckyb
 last modified      : 22 May 2016
 ===============================================================================================================================
 ===============================================================================================================================
@@ -52,9 +52,9 @@ last modified      : 22 May 2016
 #ifndef __GSTLAPPLI_GUI_UTILS_QDIRDIALOG_H__
 #define __GSTLAPPLI_GUI_UTILS_QDIRDIALOG_H__
 
-//#include <GsTLAppli/gui/common.h>
+// #include <GsTLAppli/gui/common.h>
 
-//#include <qfiledialog.h>
+// #include <qfiledialog.h>
 #include <QFileDialog>
 
 class QDirDialog : public QFileDialog {
@@ -62,26 +62,23 @@ class QDirDialog : public QFileDialog {
   Q_OBJECT
 
 public:
-  QDirDialog( const QString& extension, 
-              const QString& dirName, QWidget* parent = 0,
-              const char* name = 0,
-              QFileDialog::FileMode mode = QFileDialog::DirectoryOnly,
-              bool modal = false );
-  QDirDialog( const QString& extension, 
-              QWidget* parent = 0,
-              const char* name = 0,
-              QFileDialog::FileMode mode = QFileDialog::DirectoryOnly,
-              bool modal = false );
+  QDirDialog(const QString &extension, const QString &dirName,
+             QWidget *parent = 0, const char *name = 0,
+             QFileDialog::FileMode mode = QFileDialog::DirectoryOnly,
+             bool modal = false);
+  QDirDialog(const QString &extension, QWidget *parent = 0,
+             const char *name = 0,
+             QFileDialog::FileMode mode = QFileDialog::DirectoryOnly,
+             bool modal = false);
 
   QString selectedDirectory() const { return selected_directory_; }
 
-
 protected slots:
-  virtual void check_selected_directory( const QString& dirName );
+  virtual void check_selected_directory(const QString &dirName);
   virtual void accept();
 
 protected:
-  virtual void init_dialog( QFileDialog::FileMode mode );
+  virtual void init_dialog(QFileDialog::FileMode mode);
 
 protected:
   QString selected_directory_;
