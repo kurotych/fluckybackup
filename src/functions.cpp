@@ -525,6 +525,7 @@ void luckyBackupWindow::createToolbar() {
   profileToolbar->addSeparator();               //---seperator---
   profileToolbar->addAction(ui.actionSchedule); // schedule
   profileToolbar->addAction(ui.actionEmail);    // email report
+  profileToolbar->addAction(ui.actionSlack);    // slack report
   profileToolbar->addAction(ui.actionRefresh);  // refresh
   profileToolbar->addSeparator();               //---seperator---
   profileToolbar->addAction(ui.actionQuit);     // quit
