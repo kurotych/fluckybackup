@@ -149,7 +149,7 @@ QString emailDefaultWinCommand =
     "C:\\Program Files (x86)\\luckyBackup\\blat\\blat.exe";
 QString emailDefaultWinArguments =
     "-f %f -to %t -s %s -server %v -attach %l -body %b";
-
+QString slackWebhookUrl;
 QString rsyncDefaultCommand = "rsync";
 QString sshDefaultCommand = "ssh";
 
@@ -642,6 +642,7 @@ int loadProfile(QString profileToLoad) {
   emailFrom = "";
   emailTo = "";
   emailSMTP = "";
+  slackWebhookUrl = "";
 
   // Read all lines until the first task line or end of file if invalid
   while (!(ProfileLine.startsWith("[Task]")) && (!in.atEnd())) {
@@ -688,6 +689,8 @@ int loadProfile(QString profileToLoad) {
       emailSMTP = ProfileLine.remove("emailSMTP=");
     if (ProfileLine.startsWith("emailBody="))
       emailBody.append("\n" + ProfileLine.remove("emailBody="));
+    if (ProfileLine.startsWith("slackWebhookUrl="))
+      slackWebhookUrl = ProfileLine.remove("slackWebhookUrl=");
   }
   profileDescription.remove(0,
                             1); // remove the first "\n" from the
@@ -1295,6 +1298,7 @@ bool saveProfile(QString profileToSave) {
   out << "emailFrom=" << emailFrom << "\n"; // output the email from
   out << "emailTo=" << emailTo << "\n";     // output the email To
   out << "emailSMTP=" << emailSMTP << "\n"; // output the email smtp server
+  out << "slackWebhookUrl=" << slackWebhookUrl << "\n";
   if (emailBody != "") {
     QStringList emailBodyLines = emailBody.split("\n");
     for (count = 0; count < emailBodyLines.size(); ++count)
@@ -1498,7 +1502,8 @@ bool saveProfile(QString profileToSave) {
     out << "[Task_end] - " << currentOperation << "\n\n";
     currentOperation++;
   }
-  out << "\n[profile end]" << "\n";
+  out << "\n[profile end]"
+      << "\n";
 
   profile.close();
   return true;
@@ -1512,7 +1517,9 @@ bool exportFullProfile(QString ExportPath, QString exportType) {
   QProcess *exportProcess;
   exportProcess = new QProcess;
   QStringList exportArgs;
-  exportArgs << "-t" << "-r" << "--delete-after"
+  exportArgs << "-t"
+             << "-r"
+             << "--delete-after"
              << "--delete-excluded"; // standard rsync args
 
   if (exportType == "ExportOnlyTask") // Only include the .profile file and logs
@@ -1523,7 +1530,8 @@ bool exportFullProfile(QString ExportPath, QString exportType) {
   else // Include the .profile file and all logs & snaps related to that
     exportArgs << "--include=/*/" + profileName + "*";
 
-  exportArgs << "--include=*/" << "--exclude=*"
+  exportArgs << "--include=*/"
+             << "--exclude=*"
              << "--prune-empty-dirs"; // "only include" rsync args
 
   // also add all remote arguments exactly as used at normal backup
@@ -2271,7 +2279,8 @@ QStringList AppendArguments(operation *operationToAppend) {
       operationToAppend
           ->GetKeepSnapshots(); // this is the max number of snapshots to keep
 
-  arguments << "-h" << "--progress"
+  arguments << "-h"
+            << "--progress"
             << "--stats"; // These are the standard arguments used by rsync
 
   // add rsync arguments
@@ -3355,8 +3364,24 @@ void setTextMessages(QString source, QString dest, bool remoteSource,
 QString getMapdrive() {
   QString mapdrive = "w";
   QStringList units;
-  units << "w" << "v" << "u" << "t" << "s" << "r" << "q" << "p" << "z" << "y"
-        << "x" << "o" << "n" << "m" << "l" << "k" << "j" << "i";
+  units << "w"
+        << "v"
+        << "u"
+        << "t"
+        << "s"
+        << "r"
+        << "q"
+        << "p"
+        << "z"
+        << "y"
+        << "x"
+        << "o"
+        << "n"
+        << "m"
+        << "l"
+        << "k"
+        << "j"
+        << "i";
   for (int i = 0; i < units.size(); ++i) {
     mapdrive = units.at(i);
     if (!QDir(units.at(i) + ":" + SLASH).exists())

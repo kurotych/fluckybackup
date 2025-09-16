@@ -53,6 +53,7 @@ last modified   : 19 Jun 2016
 #include "manage.h"
 #include "modifyDialog.h"
 #include "scheduleDialog.h"
+#include "slackDialog.h"
 #include "textDialog.h"
 #include "winDialog.h"
 
@@ -1590,25 +1591,19 @@ void luckyBackupWindow::email() {
 }
 
 void luckyBackupWindow::slack() {
+  slackDialog slackdialog;
+  slackdialog.exec();
 
-  QNetworkRequest req(QUrl("https://hooks.slack.com/services/<SECRET>"));
-  req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+  if (slackdialog.getGoOn() == 0) // everything went ok
+  {
+    InfoData = tr("Slack preferences have been <font color=green>updated "
+                  "successfully") +
+               "</font>";
+    ui.textBrowser_info->setText(InfoData);
 
-  QJsonDocument doc(QJsonObject{{"text", "Hello from Qt!"}});
-  QNetworkReply *reply = net_->post(req, doc.toJson());
-
-  connect(reply, &QNetworkReply::finished, this, [reply]() {
-    const int status =
-        reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "HTTP status:" << status;
-
-    if (reply->error() == QNetworkReply::NoError) {
-      qDebug() << "Body:" << reply->readAll(); // Slack should return: "ok"
-    } else {
-      qDebug() << "Error:" << reply->error() << reply->errorString();
-    }
-    reply->deleteLater();
-  });
+    savedProfile = false; // change profile status to "unsaved"
+    ui.actionSave->setEnabled(true);
+  }
 }
 
 // taskStateChanged

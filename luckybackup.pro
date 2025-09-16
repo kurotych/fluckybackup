@@ -90,6 +90,7 @@ HEADERS	= src/operationClass.h \
     src/textDialog.h \
     src/scheduleDialog.h \
     src/emailDialog.h \
+    src/slackDialog.h \
     src/commandline.h \
     src/about.h \
     src/global.h \
@@ -125,6 +126,7 @@ SOURCES	= src/modifyDialog.cpp \
     src/executenow.cpp \
     src/scheduleDialog.cpp \
     src/emailDialog.cpp \
+    src/slackDialog.cpp \
     src/commandline.cpp \
     src/about.cpp \
     src/manage.cpp \

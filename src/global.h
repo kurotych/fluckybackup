@@ -225,6 +225,7 @@ extern QString
     emailDefaultWinArguments; // Holds the default email arguments - WINDOWS
 extern QString sendEmailNow(bool); // Send an email after a profile run. bool is
                                    // true if called for testing purposes
+extern QString slackWebhookUrl;
 
 extern QString rsyncDefaultCommand; // Holds the default rsync command
 extern QString sshDefaultCommand;   // Holds the default ssh command
@@ -237,7 +238,7 @@ extern QString
 extern QString
     appPath; // This is used for windows app path. It's also causing a ...
              //"QCoreApplication::applicationDirPath: Please instantiate the
-             //QApplication object first" WARNING message
+             // QApplication object first" WARNING message
 // extern QString rsyncDefaultWinCommand;    // Holds the default rsync command
 // for windows extern QString sshDefaultWinCommand;      // Holds the default
 // ssh command for windows
