@@ -34,6 +34,7 @@ later version.
 
 // include  header file that qmake produces from "*.ui" created with qt designer
 #include "ui_luckybackupwindow.h"
+#include <QNetworkAccessManager>
 #include <QSystemTrayIcon>
 
 //==============================================================================================================
@@ -103,6 +104,7 @@ private slots:
   void moveDown(); // SLOT: move  highlighted operation one position down
   void schedule(); // SLOT: Open schedule dialog when Button clicked()
   void email();    // SLOT: Open email dialog when Button clicked()
+  void slack();    // SLOT: Open slack dialog when Button clicked()
 
   void hideShowInfoWindow(); // SLOT to hide or show the info window
 
@@ -149,6 +151,7 @@ private:
   QAction *actionLockToolbars;
   QAction *actionVisibleToolbarText;
   QAction *actionSetWinPaths;
+  QNetworkAccessManager *net_{nullptr};
   QStringList deletedTaskNames;
   bool saveOrNot;
 
@@ -156,9 +159,9 @@ private:
   // functions.cpp~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   void setCurrentProfile(QString); // function to check if a profile is valid
                                    // and load it by calling loadProfile
-  bool loadCurrentProfile();  // function to  load an existing profile
-  bool saveCurrentProfile();  // function to save a profile
-  int createCurrentProfile(); // function to create a profile
+  bool loadCurrentProfile();       // function to  load an existing profile
+  bool saveCurrentProfile();       // function to save a profile
+  int createCurrentProfile();      // function to create a profile
   int isProfileSaved(); // function to check if the current profile is saved and
                         // proceed or not
   void
@@ -177,8 +180,8 @@ private:
                        // profile
   bool loadSettings(); // loads various luckybackup settings such as the default
                        // profile - text mode
-  bool loadSettingsQV(); // loads various luckybackup settings such as the
-                         // default profile - data mode
+  bool loadSettingsQV();      // loads various luckybackup settings such as the
+                              // default profile - data mode
   void InitializeVariables(); // initializes all variables
   bool arrangeLogSnap(bool, QString,
                       QString); // Rename-delete-copy logs & snaps when a
@@ -248,20 +251,20 @@ private:
 
   bool ExecuteBefore; // becomes true if a before command is to be executed, not
                       // rsync !!
-  bool ExecuteAfter; // becomes true if a after command is to be executed, not
-                     // rsync !!
+  bool ExecuteAfter;  // becomes true if a after command is to be executed, not
+                      // rsync !!
   bool ExecuteBeforeExitedError; // becomes true if a before command exits with
                                  // an error
   bool StopTaskExecution; // becomes true if we want to stop task execution
   bool ProcReportedError; // becomes true if any process reports an error (eg
                           // failed to start)
-  bool DestCreateFail; // This will become true if destination does not exist
-                       // and cannot be created
-  int repeatOnFailMax; // This is equal to the number of times a command will
-                       // run when it fails
-  int repeatOnFailTry; // This is the current run of a command
-  int currentBefore;   // count variable for commands to be executed before task
-  int currentAfter;    // count variable for commands to be executed before task
+  bool DestCreateFail;    // This will become true if destination does not exist
+                          // and cannot be created
+  int repeatOnFailMax;    // This is equal to the number of times a command will
+                          // run when it fails
+  int repeatOnFailTry;    // This is the current run of a command
+  int currentBefore; // count variable for commands to be executed before task
+  int currentAfter;  // count variable for commands to be executed before task
   void executeBeforeTask(); // function to start execution of pre-task commands
   void executeAfterTask();  // function to start execution of post-task commands
 

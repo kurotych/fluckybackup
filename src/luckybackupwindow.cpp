@@ -35,9 +35,16 @@ last modified   : 19 Jun 2016
 #include "luckybackupwindow.h"
 
 #include <QCloseEvent>
+#include <QCoreApplication>
+#include <QDebug>
 #include <QFileDialog>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QProcess>
 #include <QToolBar>
+#include <iostream>
 
 #include "about.h"
 #include "emailDialog.h"
@@ -54,7 +61,7 @@ helpBrowser *helpbrowser;
 // class luckyBackupWindow
 // constructor=============================================================================================
 luckyBackupWindow::luckyBackupWindow(QMainWindow *parent)
-    : QMainWindow(parent) {
+    : QMainWindow(parent), net_(new QNetworkAccessManager(this)) {
   ui.setupUi(this);
 
   InitializeVariables();
@@ -130,8 +137,14 @@ luckyBackupWindow::luckyBackupWindow(QMainWindow *parent)
           SLOT(savePressed())); // menu action saveProfile
   connect(ui.actionSchedule, SIGNAL(triggered()), this,
           SLOT(schedule())); // action schedule
+
   connect(ui.actionEmail, SIGNAL(triggered()), this,
           SLOT(email())); // action email
+
+  connect(ui.actionSlack, SIGNAL(triggered()), this,
+          SLOT(slack())); // action slack
+
+  //
   connect(ui.actionRefresh, SIGNAL(triggered()), this,
           SLOT(refreshList())); // action refresh (task list)
   connect(ui.actionDelete, SIGNAL(triggered()), this,
@@ -516,9 +529,9 @@ void luckyBackupWindow::renameCurrentProfile() {
     return;
   }
   if (currentProfile == defaultProfile) {
-    InfoData.append(
-        tr("default profile", "full phrase: 'default profile <PROFILENAME> "
-                              "renamed successfully to <NEWPROFILENAME>'."));
+    InfoData.append(tr("default profile",
+                       "full phrase: 'default profile <PROFILENAME> "
+                       "renamed successfully to <NEWPROFILENAME>'."));
     defaultProfile = newProfile;
     saveSettings();
   } else
@@ -1047,7 +1060,9 @@ void luckyBackupWindow::importProfile() {
   QDir importprofile;
   importprofile.setPath(importProfilePath);
   QStringList dirsToFilter;
-  dirsToFilter << "profiles" << "logs" << "snaps";
+  dirsToFilter << "profiles"
+               << "logs"
+               << "snaps";
   QStringList importPprofileContents =
       importprofile.entryList(dirsToFilter, QDir::AllDirs, QDir::NoSort);
   if (!importPprofileContents.contains(
@@ -1572,6 +1587,28 @@ void luckyBackupWindow::email() {
     savedProfile = false; // change profile status to "unsaved"
     ui.actionSave->setEnabled(true);
   }
+}
+
+void luckyBackupWindow::slack() {
+
+  QNetworkRequest req(QUrl("https://hooks.slack.com/services/<SECRET>"));
+  req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+  QJsonDocument doc(QJsonObject{{"text", "Hello from Qt!"}});
+  QNetworkReply *reply = net_->post(req, doc.toJson());
+
+  connect(reply, &QNetworkReply::finished, this, [reply]() {
+    const int status =
+        reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << "HTTP status:" << status;
+
+    if (reply->error() == QNetworkReply::NoError) {
+      qDebug() << "Body:" << reply->readAll(); // Slack should return: "ok"
+    } else {
+      qDebug() << "Error:" << reply->error() << reply->errorString();
+    }
+    reply->deleteLater();
+  });
 }
 
 // taskStateChanged
