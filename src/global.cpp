@@ -34,6 +34,11 @@ last modified      : 2 Nov 2018
 using namespace std;
 
 #include <QDataStream>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QProcess>
 #include <QTemporaryFile>
 #include <QTextStream>
@@ -3073,6 +3078,25 @@ QString sendEmailNow(bool testEmail) {
   }
 
   return returnString;
+}
+
+// sendSlackMessage
+// =====================================================================================================================================
+// Send a message to Slack webhook
+void sendSlackMessage(QNetworkAccessManager *nm, const QString &webhookUrl,
+                      const QString &message) {
+  if (!nm || webhookUrl.isEmpty() || message.isEmpty()) {
+    return;
+  }
+
+  QNetworkRequest req{QUrl(webhookUrl)};
+  req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+  QJsonDocument doc(QJsonObject{{"text", message}});
+  QNetworkReply *reply = nm->post(req, doc.toJson());
+
+  QObject::connect(reply, &QNetworkReply::finished,
+                   [reply]() { reply->deleteLater(); });
 }
 
 // setTextMessages

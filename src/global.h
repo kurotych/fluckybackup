@@ -37,6 +37,7 @@ later version.
 #include <QFile>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QNetworkAccessManager>
 #include <QString>
 #include <QTranslator>
 
@@ -225,6 +226,7 @@ extern QString
     emailDefaultWinArguments; // Holds the default email arguments - WINDOWS
 extern QString sendEmailNow(bool); // Send an email after a profile run. bool is
                                    // true if called for testing purposes
+extern void sendSlackMessage(QNetworkAccessManager *nm, const QString &webhookUrl, const QString &message);
 extern QString slackWebhookUrl;
 
 extern QString rsyncDefaultCommand; // Holds the default rsync command

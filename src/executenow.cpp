@@ -56,8 +56,8 @@ void luckyBackupWindow::executeNOW() {
   //  do NOT intitialise specific task variables here. Use the
   //  executeBeforeTask() function instead
 
-  NOWexecuting = true; // this is mainly used if the window close button (or
-                       // alt+F4) is pressed
+  NOWexecuting = true;  // this is mainly used if the window close button (or
+                        // alt+F4) is pressed
   ABORTpressed = false; // becomes true if abort button pressed
   // change gui to execute mode !!
   guiModeNormal = false;
@@ -583,7 +583,9 @@ void luckyBackupWindow::executeBeforeTask() {
       QProcess *rmProcess;
       rmProcess = new QProcess(this);
       QStringList rmArgs;
-      rmArgs << "--progress" << "-r" << "--delete-after";
+      rmArgs << "--progress"
+             << "-r"
+             << "--delete-after";
       int snapToKeep = currentSnaps - maxSnaps + 1;
       while (snapToKeep < currentSnaps) {
         if (WINrunning && RemoteDestUsed)
@@ -637,11 +639,12 @@ void luckyBackupWindow::executeBeforeTask() {
                                                      // GetSnapshotsListItem(0)
                                                      // + SLASH);
       else
-        ui.rsyncOutput->append("\n" + tr("failed to remove all older snapshots "
-                                         "data")); // +" " + tempDestination +
-                                                   // Operation[currentOperation]
-                                                   // -> GetSnapshotsListItem(0)
-                                                   // + SLASH);
+        ui.rsyncOutput->append("\n" +
+                               tr("failed to remove all older snapshots "
+                                  "data")); // +" " + tempDestination +
+                                            // Operation[currentOperation]
+                                            // -> GetSnapshotsListItem(0)
+                                            // + SLASH);
 
       //******************************************************
 
@@ -696,7 +699,8 @@ void luckyBackupWindow::executeBeforeTask() {
       // if ( (WINrunning) && (RemoteDestUsed) )
       //     mkdirArgs << "--mkdir";
       // else
-      mkdirArgs << "--progress" << "-r";
+      mkdirArgs << "--progress"
+                << "-r";
 
       // add all remote arguments exactly as used at normal backup
       if (RemoteDestUsed)
@@ -1514,17 +1518,16 @@ void luckyBackupWindow::setNowDoing() {
     {
       nowDoingText = "<p align=\"center\">" + tr("Elapsed time") +
                      " : <b><font color=red>" + DifTime.toString("hh:mm:ss") +
-                     "</font></b><br>" + tr("Now performing task") +
-                     "	: <b>" + Operation[currentOperation]->GetName() +
-                     "</b>";
+                     "</font></b><br>" + tr("Now performing task") + "	: <b>" +
+                     Operation[currentOperation]->GetName() + "</b>";
 
       if (DryRun)
         nowDoingText.append(" <b><font color=magenta>(" +
                             tr("simulation mode") + ")</font>");
 
       nowDoingText.append("</p>");
-      nowDoingText.append(tr("Directory") + " A	: <b><font color=blue>" +
-                          dirA + "</font></b><br>" + tr("Directory") +
+      nowDoingText.append(tr("Directory") + " A	: <b><font color=blue>" + dirA +
+                          "</font></b><br>" + tr("Directory") +
                           " B	: <b><font color=blue>" + dirB +
                           "</font></b><br>");
 
@@ -1549,9 +1552,8 @@ void luckyBackupWindow::setNowDoing() {
     {
       nowDoingText = "<p align=\"center\">" + tr("Elapsed time") +
                      " : <b><font color=red>" + DifTime.toString("hh:mm:ss") +
-                     "</font></b><br>" + tr("Now performing task") +
-                     "	: <b>" + Operation[currentOperation]->GetName() +
-                     "</b>";
+                     "</font></b><br>" + tr("Now performing task") + "	: <b>" +
+                     Operation[currentOperation]->GetName() + "</b>";
 
       if (DryRun)
         nowDoingText.append(" <b><font color=magenta>(" +
@@ -1637,6 +1639,14 @@ void luckyBackupWindow::setNowDoing() {
       actionAbort->setVisible(false);
     }
 
+    // Send Slack notification if webhook URL is configured
+    if (!slackWebhookUrl.isEmpty() && net_) {
+      QString slackMessage = appName + " - " + tr("execution of profile:") +
+                             " " + profileName + " " + tr("finished") + "\n" +
+                             trayMessage;
+      sendSlackMessage(net_, slackWebhookUrl, slackMessage);
+    }
+
     finishUp();
 
     // bring the system down if the relevant button is pressed
@@ -1698,6 +1708,14 @@ void luckyBackupWindow::setNowDoing() {
                                 " " + profileName + " " + tr("finished"),
                             trayMessage, QSystemTrayIcon::Information, 3000);
       actionAbort->setVisible(false);
+    }
+
+    // Send Slack notification for aborted tasks if webhook URL is configured
+    if (!slackWebhookUrl.isEmpty() && net_) {
+      QString slackMessage = appName + " - " + tr("execution of profile:") +
+                             " " + profileName + " " + tr("finished") + "\n" +
+                             trayMessage;
+      sendSlackMessage(net_, slackWebhookUrl, slackMessage);
     }
 
     if (errorsFound > 0) // initialize jump to next error button
@@ -1803,11 +1821,16 @@ void luckyBackupWindow::shutDownSystem() {
 
   if (KDErunning) {
     shutdownCommand = "/usr/bin/qdbus";
-    shutdownArgs << "org.kde.ksmserver" << "/KSMServer"
-                 << "org.kde.KSMServerInterface.logout" << "1" << "2" << "2";
+    shutdownArgs << "org.kde.ksmserver"
+                 << "/KSMServer"
+                 << "org.kde.KSMServerInterface.logout"
+                 << "1"
+                 << "2"
+                 << "2";
   } else if (currentUser == "super user") {
     shutdownCommand = "/sbin/shutdown";
-    shutdownArgs << "-h" << "1";
+    shutdownArgs << "-h"
+                 << "1";
     if ((QSystemTrayIcon::isSystemTrayAvailable()) &&
         (QSystemTrayIcon::supportsMessages()))
       LBtray->showMessage(appName + " - " + tr("WARNING"),

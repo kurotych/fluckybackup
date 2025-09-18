@@ -148,24 +148,7 @@ void slackDialog::slackTest() {
     return;
   }
 
-  QNetworkRequest req{QUrl(slackWebhookUrl)};
-  req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-  QJsonDocument doc(QJsonObject{{"text", "Hello from Qt!"}});
-  QNetworkReply *reply = this->nm->post(req, doc.toJson());
-
-  connect(reply, &QNetworkReply::finished, this, [reply]() {
-    const int status =
-        reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "HTTP status:" << status;
-
-    if (reply->error() == QNetworkReply::NoError) {
-      qDebug() << "Body:" << reply->readAll();
-    } else {
-      qDebug() << "Error:" << reply->error() << reply->errorString();
-    }
-    reply->deleteLater();
-  });
+  sendSlackMessage(this->nm, slackWebhookUrl, "This is test message from flucky backup");
 
   textDialog testDialog("QtInformation", "Test message sent to Slack webhook!",
                         this);
