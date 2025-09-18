@@ -2,12 +2,14 @@
 #define SLACKDIALOG_H
 
 #include <QDialog>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QLabel>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
 
 //==============================================================================================================
 // Declaration of slackDialog class
@@ -15,7 +17,7 @@ class slackDialog : public QDialog {
   Q_OBJECT
 
 public:
-  slackDialog(QDialog *parent = 0);
+  slackDialog(QNetworkAccessManager *nm, QDialog *parent = 0);
   int getGoOn();
 
 private slots:
@@ -40,6 +42,7 @@ private:
   void fillVariables();   // Fill relevant variables from gui fields
   QString warningMessage; // Warning message to display if the field is not ok
 
+  QNetworkAccessManager *nm;
 protected:
   void closeEvent(QCloseEvent *);
 };

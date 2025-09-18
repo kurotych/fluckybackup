@@ -1591,7 +1591,7 @@ void luckyBackupWindow::email() {
 }
 
 void luckyBackupWindow::slack() {
-  slackDialog slackdialog;
+  slackDialog slackdialog(this->net_);
   slackdialog.exec();
 
   if (slackdialog.getGoOn() == 0) // everything went ok

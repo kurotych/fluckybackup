@@ -23,9 +23,11 @@
 // class slackDialog
 // Constructor===============================================================================================
 // Displays a dialog to configure Slack webhook notifications
-slackDialog::slackDialog(QDialog *parent) : QDialog(parent) {
+slackDialog::slackDialog(QNetworkAccessManager *nm, QDialog *parent)
+    : QDialog(parent) {
   setupUI();
   fillWindow();
+  this->nm = nm;
 
   // connect button SLOTs
   connect(pushButton_ok, SIGNAL(clicked()), this, SLOT(okay()));
@@ -146,26 +148,25 @@ void slackDialog::slackTest() {
     return;
   }
 
-  // QNetworkRequest req(QUrl(slackWebhookUrl));
-  // req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-  //
-  // QJsonDocument doc(QJsonObject{{"text", "Hello from Qt!"}});
-  // QNetworkReply *reply = net_->post(req, doc.toJson());
-  //
-  // connect(reply, &QNetworkReply::finished, this, [reply]() {
-  //   const int status =
-  //       reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-  //   qDebug() << "HTTP status:" << status;
-  //
-  //   if (reply->error() == QNetworkReply::NoError) {
-  //     qDebug() << "Body:" << reply->readAll(); // Slack should return: "ok"
-  //   } else {
-  //     qDebug() << "Error:" << reply->error() << reply->errorString();
-  //   }
-  //   reply->deleteLater();
-  // });
+  QNetworkRequest req{QUrl(slackWebhookUrl)};
+  req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-  // TODO: Implement actual Slack test message sending
+  QJsonDocument doc(QJsonObject{{"text", "Hello from Qt!"}});
+  QNetworkReply *reply = this->nm->post(req, doc.toJson());
+
+  connect(reply, &QNetworkReply::finished, this, [reply]() {
+    const int status =
+        reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << "HTTP status:" << status;
+
+    if (reply->error() == QNetworkReply::NoError) {
+      qDebug() << "Body:" << reply->readAll();
+    } else {
+      qDebug() << "Error:" << reply->error() << reply->errorString();
+    }
+    reply->deleteLater();
+  });
+
   textDialog testDialog("QtInformation", "Test message sent to Slack webhook!",
                         this);
   testDialog.exec();
