@@ -193,29 +193,6 @@ void emailDialog::fillVariables() {
   emailError = uiE.checkBox_conditionError->isChecked();
   emailSchedule = uiE.checkBox_conditionSchedule->isChecked();
   emailTLS = uiE.checkBox_disable_tls->isChecked();
-
-  // Windows TESTING purposes for Juan
-  // TESTING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  /*  if (WINrunning)
-      {
-          // Execute the email command
-          QProcess *emailProcess;                         emailProcess = new
-     QProcess; emailProcess -> setProcessChannelMode(QProcess::MergedChannels);
-          QDir::setCurrent(luckyBackupDir);
-          emailProcess -> setWorkingDirectory(luckyBackupDir);
-          QStringList args;
-          if (!smtpUser.isEmpty() && !smtpPass.isEmpty())
-          {
-              args << "-install" << emailSMTP << emailFrom <<"2" << smtpPort
-     <<"-" << smtpUser << smtpPass; emailProcess -> start ("blat.exe",args);
-              emailProcess -> waitForFinished(10000);
-          }
-
-          // Build the return string
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          //QString errorOccured = emailProcess -> errorString();
-      }*/
-  // WINDOWS TESTING END ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // emailTest
